@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company → Model Filter</title>
+</head>
+<body>
+    <form action="/predict" method="POST">
+    <!-- Company Dropdown -->
+    <div class="mb-3">
+        <label for="company" class="form-label">Select a company</label>
+        <select class="form-select" name="company" id="company">
+            {% for company in companies %}
+                <option value="{{ company }}">{{ company }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Model Dropdown -->
+    <div class="mb-4">
+        <label for="model" class="form-label">Select a model</label>
+        <select class="form-select" name="model" id="model">
+            <option value="">-- Select a model --</option>
+            {% for model in models %}
+                <option value="{{ model }}">{{ model }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Year Dropdown -->
+    <div class="mb-4">
+        <label for="year" class="form-label">Select year</label>
+        <select class="form-select" name="year" id="year">
+            {% for year in years %}
+                <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Fuel Dropdown -->
+    <div class="mb-3">
+        <label for="fuel" class="form-label">Select fuel type</label>
+        <select class="form-select" name="fuel" id="fuel">
+            {% for fuel in fuels %}
+                <option value="{{ fuel }}">{{ fuel }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- KMs Driven -->
+    <div class="mb-3">
+        <label for="kms" class="form-label">Enter KMs Driven</label>
+        <input 
+            type="text" 
+            class="form-control" 
+            id="kms" 
+            name="kms" 
+            placeholder="Enter kilometers driven"
+        >
+    </div>
+
+    <!-- Submit Button -->
+    <div>
+        <input type="submit" value="Predict Price" class="btn btn-primary">
+    </div>
+</form>
+    {% if prediction_text %}
+    <div class="mt-4 p-3 border rounded bg-light">
+        <h4>{{ prediction_text }}</h4>
+        <hr>
+        <h5>Selected Details:</h5>
+        <ul>
+            <li><strong>Company:</strong> {{ selected_company }}</li>
+            <li><strong>Model:</strong> {{ selected_model }}</li>
+            <li><strong>Year:</strong> {{ selected_year }}</li>
+            <li><strong>Fuel Type:</strong> {{ selected_fuel }}</li>
+            <li><strong>Kilometers Driven:</strong> {{ selected_kms }}</li>
+        </ul>
+    </div>
+{% endif %}
+
+
+
+
+    <!-- ✅ JavaScript -->
+    <script>
+        // Convert your models list from Flask into JavaScript
+        const allModels = {{ models | tojson }};
+
+        // Get dropdown elements
+        const companySelect = document.getElementById("company");
+        const modelSelect = document.getElementById("model");
+
+        // Store the original model options (so we can filter them later)
+        const allModelOptions = [...modelSelect.options].map(opt => opt.value);
+
+        // When company selection changes
+        companySelect.addEventListener("change", function() {
+            const selectedCompany = this.value.toLowerCase();
+
+            // Clear current model options
+            modelSelect.innerHTML = "";
+
+            // Add default option
+            const defaultOption = document.createElement("option");
+            defaultOption.text = "-- Select a model --";
+            defaultOption.value = "";
+            modelSelect.appendChild(defaultOption);
+
+            // Filter models that start with company name
+            allModelOptions.forEach(modelName => {
+                if (modelName.toLowerCase().startsWith(selectedCompany)) {
+                    const option = document.createElement("option");
+                    option.value = modelName;
+                    option.text = modelName;
+                    modelSelect.appendChild(option);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
