@@ -45,7 +45,7 @@ Car_Price_Prediction/
 
 🚀 How to Run the Project Locally
 1. Clone the Repository
-git clone https://github.com/yourusername/car-price-prediction.git
+git clone https://github.com/Samartha223/car-price-prediction.git
 cd car-price-prediction
 
 2. Install Dependencies
